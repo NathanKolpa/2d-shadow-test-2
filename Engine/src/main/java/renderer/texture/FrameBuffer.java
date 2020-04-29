@@ -10,19 +10,26 @@ public class FrameBuffer implements RenderFrame
 	private int bufferId;
 	private Texture texture;
 
-	public FrameBuffer(int width, int height)
+	public static FrameBuffer createFrameBuffer(int width, int height)
 	{
-		bufferId = glGenFramebuffersEXT();
-		texture = Texture.framebufferTexture(width, height);
+		FrameBuffer frameBuffer = new FrameBuffer(glGenFramebuffersEXT(), Texture.createRgbaTexture(width, height));
 
-		glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, bufferId);
-		texture.bind();
+		glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, frameBuffer.bufferId);
+		frameBuffer.texture.bind();
 
-		glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT, GL_TEXTURE_2D, texture.getTextureId(), 0);
-		check();
+		glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT, GL_TEXTURE_2D, frameBuffer.texture.getTextureId(), 0);
+		frameBuffer.check();
 
-		texture.unBind();
+		frameBuffer.texture.unBind();
 		glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
+
+		return frameBuffer;
+	}
+
+	private FrameBuffer(int bufferId, Texture texture)
+	{
+		this.bufferId = bufferId;
+		this.texture = texture;
 	}
 
 	private void check()
@@ -53,7 +60,7 @@ public class FrameBuffer implements RenderFrame
 	public void clear()
 	{
 		glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-		glClear(GL_COLOR_BUFFER_BIT);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	}
 
 	@Override

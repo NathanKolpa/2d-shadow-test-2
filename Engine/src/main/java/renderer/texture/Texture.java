@@ -22,7 +22,7 @@ public class Texture
 		this.height = height;
 	}
 
-	public static Texture framebufferTexture(int width, int height)
+	public static Texture createRgbaTexture(int width, int height)
 	{
 		int textureId = glGenTextures();
 		glBindTexture(GL_TEXTURE_2D, textureId);
