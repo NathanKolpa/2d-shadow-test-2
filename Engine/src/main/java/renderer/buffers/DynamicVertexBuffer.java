@@ -69,7 +69,6 @@ public class DynamicVertexBuffer implements VertexBuffer
 	{
 		bind();
 		glDrawArrays(GL_TRIANGLES, 0, vertexCount);
-		unBind();
 	}
 
 	/**

@@ -69,7 +69,6 @@ public class StaticVertexBuffer implements VertexBuffer
 	{
 		bind();
 		glDrawArrays(GL_TRIANGLES, 0, vertexCount);
-		unBind();
 	}
 
 	private void bind()

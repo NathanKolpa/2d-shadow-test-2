@@ -138,6 +138,18 @@ public class GlfwWindow implements GameWindow, RenderFrame
 	}
 
 	@Override
+	public float getPixelWidth()
+	{
+		return getWidth();
+	}
+
+	@Override
+	public float getPixelHeight()
+	{
+		return getHeight();
+	}
+
+	@Override
 	public void clear()
 	{
 		glClearColor(0.1f, 0.1f, 0.2f, 1.0f);

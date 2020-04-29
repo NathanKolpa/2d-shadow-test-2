@@ -1,4 +1,6 @@
+import renderer.Renderer2D;
 import renderer.Shader;
+import renderer.Transform;
 import renderer.buffers.DynamicVertexBuffer;
 import renderer.buffers.layout.BufferElement;
 import renderer.buffers.layout.BufferLayout;
@@ -22,30 +24,33 @@ public class Main
 		GlfwWindow window = new GlfwWindow(1280, 720, "yeet");
 		window.bindContext();
 
-
-		Shader shader = Shader.fromText("#version 330 core\n" + "layout (location = 0) in vec3 aPos; \n" + "  \n" + "\n" + "void main()\n" + "{\n" + "    gl_Position = vec4(aPos, 1.0); // see how we directly give a vec3 to vec4's constructor\n" + "}",
-				"#version 330 core\n" + "out vec4 FragColor;\n" + "  \n" + "\n" + "void main()\n" + "{\n" + "    FragColor = vec4(0.5, 0.5, 1.0, 1.0);\n" + "} ");
+		//load
+		Renderer2D renderer2D = Renderer2D.loadRenderer(window);
 
 		DynamicVertexBuffer buffer = DynamicVertexBuffer.fromLayout(new float[]{
-				1.0f, 1.0f, 0.0f,
-				1.0f, -1.0f, 0.0f,
-				-1.0f, -1.0f, 0.0f,
+				10.0f, 10.0f,
+				10.0f, -10.0f,
+				-10.0f, -10.0f,
 
+				10.0f, 10.0f,
+				-10.0f, 10.0f,
+				-10, -10.0f,
 
 		}, new BufferLayout(new BufferElement[]{
-				new BufferElement(3),
+				new BufferElement(2),
 		}));
+		renderer2D.beginScene(null);
 
+		//run
+		renderer2D.drawMesh(buffer, new Transform());
 
-		shader.bind();
-		buffer.draw();
-
+		renderer2D.endScene();
 		window.display();
 
 		TimeUnit.SECONDS.sleep(1);
 
 		buffer.clean();
-		shader.clean();
+		renderer2D.clean();
 
 		window.unbindContext();
 		window.clean();

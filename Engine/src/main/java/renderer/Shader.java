@@ -55,7 +55,6 @@ public class Shader
 	}
 
 	private int programId;
-	private boolean bound = false;
 	private HashMap<String, Integer> locations = new HashMap<>();
 
 	private Shader(int programId)
@@ -66,13 +65,11 @@ public class Shader
 	public void bind()
 	{
 		glUseProgram(programId);
-		bound = true;
 	}
 
 	public void unBind()
 	{
 		glUseProgram(0);
-		bound = false;
 	}
 
 	public void clean()
@@ -85,9 +82,6 @@ public class Shader
 
 	private int getLocation(String name)
 	{
-		if(!bound)
-			throw new RuntimeException("Shader must be bound");
-
 		if (locations.containsKey(name))
 			return locations.get(name);
 
