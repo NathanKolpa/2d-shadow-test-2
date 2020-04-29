@@ -12,6 +12,8 @@ import java.nio.IntBuffer;
 
 import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
 import static org.lwjgl.glfw.GLFW.*;
+import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL11.GL_DEPTH_BUFFER_BIT;
 import static org.lwjgl.system.MemoryStack.stackPush;
 import static org.lwjgl.system.MemoryUtil.NULL;
 
@@ -138,10 +140,7 @@ public class GlfwWindow implements GameWindow, RenderFrame
 	@Override
 	public void clear()
 	{
-		glfwFreeCallbacks(windowPtr);
-		glfwDestroyWindow(windowPtr);
-
-		if (debugProc != null)
-			debugProc.free();
+		glClearColor(0.1f, 0.1f, 0.2f, 1.0f);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	}
 }
