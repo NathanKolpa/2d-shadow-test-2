@@ -111,6 +111,7 @@ public class Renderer2D
 
 		return new Matrix4f().setOrtho(-halfWidth, halfWidth, -halfHeight, halfHeight, -1, 1)
 				.translate(model.getPosition().x - cameraPos.x, model.getPosition().y - cameraPos.y, 0)
+				.rotateZ((float) Math.toRadians(currentCamera.getRotation()))
 				.scale(model.getScale().x, model.getScale().y, 1);
 	}
 
@@ -156,7 +157,6 @@ public class Renderer2D
 
 	public void addDynamicLight(Transform transform)
 	{
-		Matrix4f mvp = getMvp(transform);
 		Vector2f cameraPos = currentCamera.getPosition();
 
 		//transform the occlusion map
@@ -208,6 +208,12 @@ public class Renderer2D
 
 		//draw to light map
 		{
+			float halfWidth = target.getPixelWidth() / 2f;
+			float halfHeight = target.getPixelHeight() / 2f;
+
+			Matrix4f mvp = new Matrix4f().setOrtho(-halfWidth, halfWidth, -halfHeight, halfHeight, -1, 1)
+					.translate(transform.getPosition().x - cameraPos.x, transform.getPosition().y - cameraPos.y, 0)
+					.scale(transform.getScale().x, transform.getScale().y, 1);
 
 			glEnable(GL_BLEND);
 			glBlendFunc(GL_SRC_ALPHA, GL_ONE);

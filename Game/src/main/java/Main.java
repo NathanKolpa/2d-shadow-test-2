@@ -35,7 +35,7 @@ public class Main
 		transform.getScale().y = 1000;
 
 		Transform occlusionTransform = new Transform();
-		occlusionTransform.getScale().x = 10;
+		occlusionTransform.getScale().x = 100;
 		occlusionTransform.getScale().y = 10;
 		occlusionTransform.getPosition().x = 100;
 		occlusionTransform.getPosition().y = 100;
@@ -62,13 +62,13 @@ public class Main
 			window.pollEvents();
 			window.clear();
 
-			elapsedTime += 0.001f;
+			elapsedTime += 0.1f;
 
-			camera.getPosition().x = (float) Math.sin(elapsedTime) * 500f;
-			camera.getPosition().y = (float) Math.cos(elapsedTime) * 500f;
+			camera.setRotation(elapsedTime);
+			System.out.println(elapsedTime);
 
-//			transform.getScale().x += 1 * 0.5;
-//			transform.getScale().y += 1 * 0.5;
+			transform.getScale().x += 1 * 0.5;
+			transform.getScale().y += 1 * 0.5;
 
 			renderer2D.beginScene(camera);
 
