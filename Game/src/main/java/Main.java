@@ -1,3 +1,4 @@
+import renderer.Camera;
 import renderer.Renderer2D;
 import renderer.Shader;
 import renderer.Transform;
@@ -26,23 +27,26 @@ public class Main
 
 		//load
 		Renderer2D renderer2D = Renderer2D.loadRenderer(window);
+		Transform transform = new Transform();
+		transform.getScale().x = 10;
+		transform.getScale().y = 10;
 
 		DynamicVertexBuffer buffer = DynamicVertexBuffer.fromLayout(new float[]{
-				10.0f, 10.0f,
-				10.0f, -10.0f,
-				-10.0f, -10.0f,
+				1.0f, 1.0f,
+				1.0f, -1.0f,
+				-1.0f, -1.0f,
 
-				10.0f, 10.0f,
-				-10.0f, 10.0f,
-				-10, -10.0f,
+				1.0f, 1.0f,
+				-1.0f, 1.0f,
+				-1, -1.0f,
 
 		}, new BufferLayout(new BufferElement[]{
 				new BufferElement(2),
 		}));
-		renderer2D.beginScene(null);
+		renderer2D.beginScene(new Camera());
 
 		//run
-		renderer2D.drawMesh(buffer, new Transform());
+		renderer2D.drawMesh(buffer, transform);
 
 		renderer2D.endScene();
 		window.display();

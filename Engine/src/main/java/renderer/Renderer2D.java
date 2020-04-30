@@ -2,7 +2,11 @@ package renderer;
 
 import application.RenderFrame;
 import org.joml.Matrix4f;
+import org.joml.Vector2f;
+import renderer.buffers.StaticVertexBuffer;
 import renderer.buffers.VertexBuffer;
+import renderer.buffers.layout.BufferElement;
+import renderer.buffers.layout.BufferLayout;
 
 import java.util.Scanner;
 
@@ -12,9 +16,24 @@ public class Renderer2D
 {
 	public static Renderer2D loadRenderer(RenderFrame target)
 	{
+		float data[] = new float[]{
+				1.0f, 1.0f, 0.0f, 1.0f, 1.0f,//
+				1.0f, -1.0f, 0.0f, 1.0f, 0.0f,//
+				-1.0f, -1.0f, 0.0f, 0.0f, 0.0f,//
+
+				1.0f, 1.0f, 0.0f, 1.0f, 1.0f,//
+				-1.0f, 1.0f, 0.0f, 0.0f, 1.0f,//
+				-1.0f, -1.0f, 0.0f, 0.0f, 0.0f,//
+		};
+
+		VertexBuffer buffer = StaticVertexBuffer.fromLayout(data, new BufferLayout(new BufferElement[]{
+				new BufferElement(3),//position
+				new BufferElement(2),//texture
+		}));
+
 		Shader defaultShader = Shader.fromText(readFile("/shaders/Default.vert"), readFile("/shaders/Default.frag"));
 
-		return new Renderer2D(target, defaultShader);
+		return new Renderer2D(target, buffer, defaultShader);
 	}
 
 	private static String readFile(String path)
@@ -25,9 +44,11 @@ public class Renderer2D
 	private RenderFrame target;
 	private Shader defaultShader;
 	private Camera currentCamera = null;
+	private VertexBuffer testBuffer;
 
-	private Renderer2D(RenderFrame target, Shader defaultShader)
+	private Renderer2D(RenderFrame target, VertexBuffer testBuffer, Shader defaultShader)
 	{
+		this.testBuffer = testBuffer;
 		this.defaultShader = defaultShader;
 		this.target = target;
 	}
@@ -41,16 +62,21 @@ public class Renderer2D
 
 	private Matrix4f getMvp(Transform model)
 	{
+		Vector2f cameraPos = currentCamera.getTransform().getPosition();
 		float halfWidth = target.getPixelWidth() / 2f;
 		float halfHeight = target.getPixelHeight() / 2f;
-		return new Matrix4f().setOrtho(-halfWidth, halfWidth, -halfHeight, halfHeight, -1, 1);
+
+		return new Matrix4f().setOrtho(-halfWidth, halfWidth, -halfHeight, halfHeight, -1, 1)
+				.translate(-cameraPos.x, -cameraPos.y, 0)
+				.translate(model.getPosition().x, model.getPosition().y, 0)
+				.scale(model.getScale().x, model.getScale().y, 0);
 	}
 
 	public void beginScene(Camera camera)
 	{
 		currentCamera = camera;
 
-		glViewport(0, 0, (int)target.getPixelWidth(), (int)target.getPixelHeight());
+		glViewport(0, 0, (int) target.getPixelWidth(), (int) target.getPixelHeight());
 		target.clear();
 	}
 
@@ -70,5 +96,6 @@ public class Renderer2D
 	public void clean()
 	{
 		defaultShader.clean();
+		testBuffer.clean();
 	}
 }
