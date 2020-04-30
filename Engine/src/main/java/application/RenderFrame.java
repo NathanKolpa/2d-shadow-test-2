@@ -6,5 +6,6 @@ public interface RenderFrame
 	void unbindContext();
 	float getPixelWidth();
 	float getPixelHeight();
+	void setViewport();
 	void clear();
 }

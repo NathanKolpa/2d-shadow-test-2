@@ -87,6 +87,16 @@ public class FrameBuffer implements RenderFrame
 		return texture.getHeight();
 	}
 
+	@Override
+	public void setViewport()
+	{
+		glViewport(0, 0, texture.getWidth(), texture.getHeight());
+	}
+
+	public void clean()
+	{
+	}
+
 	public Texture getTexture()
 	{
 		return texture;

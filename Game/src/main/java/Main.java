@@ -11,7 +11,7 @@ import java.util.concurrent.TimeUnit;
 
 public class Main
 {
-	public static void main(String[] args) throws InterruptedException
+	public static void main(String[] args) throws Exception
 	{
 		LifeTime.init();
 
@@ -20,16 +20,25 @@ public class Main
 		LifeTime.destroy();
 	}
 
-	public static void run(String[] args) throws InterruptedException
+	public static void run(String[] args)
 	{
 		GlfwWindow window = new GlfwWindow(1280, 720, "yeet");
 		window.bindContext();
 
 		//load
+		Camera camera = new Camera();
+
 		Renderer2D renderer2D = Renderer2D.loadRenderer(window);
 		Transform transform = new Transform();
-		transform.getScale().x = 10;
-		transform.getScale().y = 10;
+		transform.getPosition().y = 100;
+		transform.getScale().x = 1000;
+		transform.getScale().y = 1000;
+
+		Transform occlusionTransform = new Transform();
+		occlusionTransform.getScale().x = 10;
+		occlusionTransform.getScale().y = 10;
+		occlusionTransform.getPosition().x = 100;
+		occlusionTransform.getPosition().y = 100;
 
 		DynamicVertexBuffer buffer = DynamicVertexBuffer.fromLayout(new float[]{
 				1.0f, 1.0f,
@@ -43,15 +52,44 @@ public class Main
 		}, new BufferLayout(new BufferElement[]{
 				new BufferElement(2),
 		}));
-		renderer2D.beginScene(new Camera());
 
 		//run
-		renderer2D.drawMesh(buffer, transform);
 
-		renderer2D.endScene();
-		window.display();
+		float elapsedTime = 0;
 
-		TimeUnit.SECONDS.sleep(1);
+		while (window.shouldRun())
+		{
+			window.pollEvents();
+			window.clear();
+
+			elapsedTime += 0.001f;
+
+			camera.getPosition().x = (float) Math.sin(elapsedTime) * 500f;
+			camera.getPosition().y = (float) Math.cos(elapsedTime) * 500f;
+
+//			transform.getScale().x += 1 * 0.5;
+//			transform.getScale().y += 1 * 0.5;
+
+			renderer2D.beginScene(camera);
+
+			{
+				renderer2D.beginLighting();
+				renderer2D.addOccluder(buffer, occlusionTransform);
+
+				renderer2D.addDynamicLight(transform);
+				renderer2D.endLighting();
+			}
+
+//			renderer2D.drawMesh(buffer, transform);
+			renderer2D.drawMesh(buffer, occlusionTransform);
+
+			renderer2D.endScene();
+
+			window.display();
+		}
+
+
+
 
 		buffer.clean();
 		renderer2D.clean();

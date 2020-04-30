@@ -95,7 +95,7 @@ public class GlfwWindow implements GameWindow, RenderFrame
 
 	public boolean shouldRun()
 	{
-		return false;
+		return !glfwWindowShouldClose(windowPtr);
 	}
 
 	public void display()
@@ -147,6 +147,12 @@ public class GlfwWindow implements GameWindow, RenderFrame
 	public float getPixelHeight()
 	{
 		return getHeight();
+	}
+
+	@Override
+	public void setViewport()
+	{
+		glViewport(0, 0, getWidth(), getHeight());
 	}
 
 	@Override
