@@ -17,7 +17,7 @@ public class Texture implements Allocated
 
 	public static final int WRAP_REPEAT = GL_REPEAT;
 
-	private Texture(int textureId, int width, int height)
+	public Texture(int textureId, int width, int height)
 	{
 		this.textureId = textureId;
 		this.width = width;
@@ -33,11 +33,6 @@ public class Texture implements Allocated
 		glBindTexture(GL_TEXTURE_2D, 0);
 
 		return new Texture(textureId, width, height);
-	}
-
-	public void bind()
-	{
-		bind(0);
 	}
 
 	public void bind(int slot)
@@ -82,6 +77,6 @@ public class Texture implements Allocated
 	@Override
 	public void clean()
 	{
-
+		glDeleteTextures(textureId);
 	}
 }

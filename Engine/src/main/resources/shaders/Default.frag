@@ -1,10 +1,10 @@
 #version 400 core
 
-in vec2 pass_texCoord;
+uniform vec4 uni_color = vec4(1, 1, 1, 1);
 
 out vec4 out_fragColor;
 
 void main()
 {
-    out_fragColor = vec4(0.5, 0.5, 0.5, 1.0);
+    out_fragColor = uni_color;
 }

@@ -1,4 +1,7 @@
 import infrastructure.LifeTime;
+import infrastructure.opengl.buffers.StaticVertexBuffer;
+import infrastructure.opengl.buffers.VertexBuffer;
+import infrastructure.opengl.texture.Texture;
 import infrastructure.renderer.Camera;
 import infrastructure.renderer.Renderer2D;
 import infrastructure.renderer.Transform;
@@ -25,6 +28,8 @@ public class Main
 		AssetManager assetManager = new AssetManager();
 		window.bindContext();
 
+		Texture texture = assetManager.getTextures().getResource("textures/fallback.png");
+
 		//load
 		Camera camera = new Camera();
 
@@ -40,17 +45,17 @@ public class Main
 		occlusionTransform.getPosition().x = 100;
 		occlusionTransform.getPosition().y = 100;
 
-		DynamicVertexBuffer buffer = DynamicVertexBuffer.fromLayout(new float[]{
-				1.0f, 1.0f,
-				1.0f, -1.0f,
-				-1.0f, -1.0f,
+		VertexBuffer buffer = StaticVertexBuffer.fromLayout(new float[]{
+				1.0f, 1.0f, 0.0f, 1.0f, 1.0f,//
+				1.0f, -1.0f, 0.0f, 1.0f, 0.0f,//
+				-1.0f, -1.0f, 0.0f, 0.0f, 0.0f,//
 
-				1.0f, 1.0f,
-				-1.0f, 1.0f,
-				-1, -1.0f,
-
+				1.0f, 1.0f, 0.0f, 1.0f, 1.0f,//
+				-1.0f, 1.0f, 0.0f, 0.0f, 1.0f,//
+				-1.0f, -1.0f, 0.0f, 0.0f, 0.0f,//
 		}, new BufferLayout(new BufferElement[]{
-				new BufferElement(2),
+				new BufferElement(3),//position
+				new BufferElement(2),//texture
 		}));
 
 		float time = 0;
@@ -75,7 +80,7 @@ public class Main
 				renderer2D.endLighting();
 			}
 
-			renderer2D.drawMesh(buffer, occlusionTransform);
+			renderer2D.drawMesh(buffer, occlusionTransform, texture);
 
 			renderer2D.endScene();
 

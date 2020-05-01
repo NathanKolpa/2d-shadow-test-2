@@ -1,6 +1,4 @@
-package application.resource;
-
-import application.resource.FileReader;
+package application.resource.manager;
 
 import java.io.FileNotFoundException;
 import java.io.InputStream;
@@ -16,12 +14,11 @@ public class PackageFileReader implements FileReader
 	}
 
 	@Override
-	public String readFile(String path) throws FileNotFoundException
+	public InputStream readFile(String path) throws FileNotFoundException
 	{
 		try
 		{
-			InputStream stream = packageClass.getResourceAsStream(path);
-			return new Scanner(stream, "UTF-8").useDelimiter("\\A").next();
+			return packageClass.getResourceAsStream("/" + path);
 		}
 		catch (NullPointerException e)
 		{

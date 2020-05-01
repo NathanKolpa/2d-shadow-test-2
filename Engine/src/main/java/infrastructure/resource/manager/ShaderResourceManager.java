@@ -3,10 +3,11 @@ package infrastructure.resource.manager;
 import infrastructure.opengl.Shader;
 import infrastructure.opengl.exceptions.ShaderCompileException;
 import infrastructure.opengl.exceptions.ShaderLinkException;
-import application.resource.FileReader;
-import application.resource.ResourceManager;
+import application.resource.manager.FileReader;
+import application.resource.manager.ResourceManager;
 
 import java.io.FileNotFoundException;
+import java.util.Scanner;
 
 public class ShaderResourceManager extends ResourceManager<Shader>
 {
@@ -27,8 +28,8 @@ public class ShaderResourceManager extends ResourceManager<Shader>
 		if (isLoaded(key))
 			return getLoadedResource(key);
 
-		String vertexSource = fileReader.readFile(vertexPath);
-		String fragmentSource = fileReader.readFile(fragmentPath);
+		String vertexSource =  new Scanner(fileReader.readFile(vertexPath)).useDelimiter("\\A").next();
+		String fragmentSource = new Scanner(fileReader.readFile(fragmentPath)).useDelimiter("\\A").next();
 
 		return Shader.fromText(vertexSource, fragmentSource);
 	}

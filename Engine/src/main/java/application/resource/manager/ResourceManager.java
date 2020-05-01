@@ -1,4 +1,4 @@
-package application.resource;
+package application.resource.manager;
 
 import infrastructure.Allocated;
 
@@ -28,7 +28,8 @@ public class ResourceManager<T extends Allocated>
 	{
 		for(Map.Entry<String, T> allocated : resources.entrySet())
 		{
-			allocated.getValue().clean();
+			if(allocated.getValue() != null)
+				allocated.getValue().clean();
 		}
 	}
 }

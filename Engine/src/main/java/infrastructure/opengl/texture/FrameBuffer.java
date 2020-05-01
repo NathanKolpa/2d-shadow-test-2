@@ -15,7 +15,7 @@ public class FrameBuffer implements RenderFrame
 		FrameBuffer frameBuffer = new FrameBuffer(glGenFramebuffersEXT(), Texture.createRgbaTexture(width, height));
 
 		glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, frameBuffer.bufferId);
-		frameBuffer.texture.bind();
+		frameBuffer.texture.bind(2);
 
 		glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT, GL_TEXTURE_2D, frameBuffer.texture.getTextureId(), 0);
 		frameBuffer.check();

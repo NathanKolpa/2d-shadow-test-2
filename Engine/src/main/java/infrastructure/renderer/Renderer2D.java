@@ -10,6 +10,7 @@ import infrastructure.opengl.buffers.layout.BufferLayout;
 import infrastructure.opengl.exceptions.ShaderCompileException;
 import infrastructure.opengl.exceptions.ShaderLinkException;
 import infrastructure.opengl.texture.FrameBuffer;
+import infrastructure.opengl.texture.Texture;
 import infrastructure.resource.AssetManager;
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
@@ -38,18 +39,19 @@ public class Renderer2D implements Allocated
 				new BufferElement(2),//texture
 		}));
 
-		Shader defaultShader = assetManager.getShaders().getShader("/shaders/Default.vert", "/shaders/Default.frag");
-		Shader testShader = assetManager.getShaders().getShader("/shaders/TestShader.vert", "/shaders/TestShader.frag");
-		Shader occlusionTransform = assetManager.getShaders().getShader("/shaders/Dynamic2DLightPipeline/OcclusionTransform.vert", "/shaders/Dynamic2DLightPipeline/OcclusionTransform.frag");
-		Shader dynamicLightShader = assetManager.getShaders().getShader("/shaders/Dynamic2DLightPipeline/DynamicLight2D.vert", "/shaders/Dynamic2DLightPipeline/DynamicLight2D.frag");
-		Shader occlusionShader = assetManager.getShaders().getShader("/shaders/Dynamic2DLightPipeline/Occlusion.vert", "/shaders/Dynamic2DLightPipeline/Occlusion.frag");
-		Shader lightSamplerShader = assetManager.getShaders().getShader("/shaders/Dynamic2DLightPipeline/LightSampler2D.vert", "/shaders/Dynamic2DLightPipeline/LightSampler2D.frag");
+		Shader defaultShader = assetManager.getShaders().getShader("shaders/Default.vert", "shaders/Default.frag");
+		Shader defaultTexturedShader = assetManager.getShaders().getShader("shaders/Default.vert", "shaders/DefaultTextured.frag");
+		Shader testShader = assetManager.getShaders().getShader("shaders/TestShader.vert", "shaders/TestShader.frag");
+		Shader occlusionTransform = assetManager.getShaders().getShader("shaders/Dynamic2DLightPipeline/OcclusionTransform.vert", "shaders/Dynamic2DLightPipeline/OcclusionTransform.frag");
+		Shader dynamicLightShader = assetManager.getShaders().getShader("shaders/Dynamic2DLightPipeline/DynamicLight2D.vert", "shaders/Dynamic2DLightPipeline/DynamicLight2D.frag");
+		Shader occlusionShader = assetManager.getShaders().getShader("shaders/Dynamic2DLightPipeline/Occlusion.vert", "shaders/Dynamic2DLightPipeline/Occlusion.frag");
+		Shader lightSamplerShader = assetManager.getShaders().getShader("shaders/Dynamic2DLightPipeline/LightSampler2D.vert", "shaders/Dynamic2DLightPipeline/LightSampler2D.frag");
 
 		FrameBuffer localOcclusionMap = FrameBuffer.createFrameBuffer(1024, 1024);
 		FrameBuffer occlusionMap = FrameBuffer.createFrameBuffer(1024, 1024);
 		FrameBuffer dynamicLightLookup = FrameBuffer.createFrameBuffer(1024, 1);
 
-		return new Renderer2D(target, occlusionMap, dynamicLightLookup, buffer, defaultShader, occlusionTransform, localOcclusionMap, occlusionShader, dynamicLightShader, lightSamplerShader, testShader);
+		return new Renderer2D(target, occlusionMap, dynamicLightLookup, buffer, defaultShader, occlusionTransform, localOcclusionMap, occlusionShader, dynamicLightShader, lightSamplerShader, testShader, defaultTexturedShader);
 	}
 
 	private final RenderFrame target;
@@ -63,12 +65,13 @@ public class Renderer2D implements Allocated
 	private Shader dynamicLightShader;
 	private Shader lightSamplerShader;
 	private Shader testShader;
+	private Shader defaultTexturedShader;
 
 	private Camera currentCamera = null;
 	private final VertexBuffer testBuffer;
 
 
-	private Renderer2D(RenderFrame target, FrameBuffer occlusionMap, FrameBuffer dynamicLightLookup, VertexBuffer testBuffer, Shader defaultShader, Shader occlusionTransform, FrameBuffer localOcclusionMap, Shader occlusionShader, Shader dynamicLightShader, Shader lightSamplerShader, Shader testShader)
+	private Renderer2D(RenderFrame target, FrameBuffer occlusionMap, FrameBuffer dynamicLightLookup, VertexBuffer testBuffer, Shader defaultShader, Shader occlusionTransform, FrameBuffer localOcclusionMap, Shader occlusionShader, Shader dynamicLightShader, Shader lightSamplerShader, Shader testShader, Shader defaultTexturedShader)
 	{
 		this.occlusionMap = occlusionMap;
 		this.dynamicLightLookup = dynamicLightLookup;
@@ -81,6 +84,7 @@ public class Renderer2D implements Allocated
 		this.dynamicLightShader = dynamicLightShader;
 		this.lightSamplerShader = lightSamplerShader;
 		this.testShader = testShader;
+		this.defaultTexturedShader = defaultTexturedShader;
 	}
 
 	// begin render code
@@ -242,6 +246,19 @@ public class Renderer2D implements Allocated
 	{
 		defaultShader.bind();
 		defaultShader.setMat4("uni_mvp", getMvp(transform));
+
+
+		buffer.draw();
+	}
+
+	public void drawMesh(VertexBuffer buffer, Transform transform, Texture texture)
+	{
+		texture.bind(0);
+
+		defaultTexturedShader.bind();
+		defaultTexturedShader.setMat4("uni_mvp", getMvp(transform));
+		defaultTexturedShader.setInt("uni_texture", 0);
+
 
 		buffer.draw();
 	}

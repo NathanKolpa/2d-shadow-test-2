@@ -1,8 +1,9 @@
-package application.resource;
+package application.resource.manager;
 
 import infrastructure.Allocated;
 
 import java.io.FileNotFoundException;
+import java.util.Scanner;
 
 public class SingleFileResourceManager<T extends Allocated> extends ResourceManager<T>
 {
@@ -22,8 +23,7 @@ public class SingleFileResourceManager<T extends Allocated> extends ResourceMana
 			return getLoadedResource(path);
 		}
 
-		String fileContent = reader.readFile(path);
-		T resource = resourceLoader.load(fileContent);
+		T resource = resourceLoader.load(reader.readFile(path));
 
 		setLoadedResource(path, resource);
 
