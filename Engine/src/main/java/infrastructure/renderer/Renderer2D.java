@@ -47,7 +47,7 @@ public class Renderer2D implements Allocated
 
 		FrameBuffer localOcclusionMap = FrameBuffer.createFrameBuffer(1024, 1024);
 		FrameBuffer occlusionMap = FrameBuffer.createFrameBuffer(1024, 1024);
-		FrameBuffer dynamicLightLookup = FrameBuffer.createFrameBuffer(1024, 1024);
+		FrameBuffer dynamicLightLookup = FrameBuffer.createFrameBuffer(1024, 1);
 
 		return new Renderer2D(target, occlusionMap, dynamicLightLookup, buffer, defaultShader, occlusionTransform, localOcclusionMap, occlusionShader, dynamicLightShader, lightSamplerShader, testShader);
 	}
