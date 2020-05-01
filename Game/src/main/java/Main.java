@@ -35,8 +35,8 @@ public class Main
 		transform.getScale().y = 1000;
 
 		Transform occlusionTransform = new Transform();
-		occlusionTransform.getScale().x = 100;
-		occlusionTransform.getScale().y = 10;
+		occlusionTransform.getScale().x = 50;
+		occlusionTransform.getScale().y = 100;
 		occlusionTransform.getPosition().x = 100;
 		occlusionTransform.getPosition().y = 100;
 
@@ -53,21 +53,17 @@ public class Main
 				new BufferElement(2),
 		}));
 
-		//run
-
-		float elapsedTime = 0;
+		float time = 0;
 
 		while (window.shouldRun())
 		{
 			window.pollEvents();
 			window.clear();
 
-			elapsedTime += 0.1f;
+			time += 0.01;
 
-			camera.setRotation(elapsedTime);
-
-			transform.getScale().x += 1 * 0.5;
-			transform.getScale().y += 1 * 0.5;
+			occlusionTransform.getPosition().x = (float) Math.sin(time) * 150f;
+			occlusionTransform.getPosition().y = (float) Math.cos(time) * 150f;
 
 			renderer2D.beginScene(camera);
 
@@ -79,7 +75,6 @@ public class Main
 				renderer2D.endLighting();
 			}
 
-//			renderer2D.drawMesh(buffer, transform);
 			renderer2D.drawMesh(buffer, occlusionTransform);
 
 			renderer2D.endScene();
