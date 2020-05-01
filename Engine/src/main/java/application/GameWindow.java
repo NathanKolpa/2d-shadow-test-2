@@ -1,4 +1,4 @@
-package window;
+package application;
 
 public interface GameWindow
 {

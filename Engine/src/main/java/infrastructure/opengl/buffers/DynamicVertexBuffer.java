@@ -1,8 +1,8 @@
-package renderer.buffers;
+package infrastructure.opengl.buffers;
 
 import org.lwjgl.BufferUtils;
-import renderer.buffers.layout.BufferElement;
-import renderer.buffers.layout.BufferLayout;
+import infrastructure.opengl.buffers.layout.BufferElement;
+import infrastructure.opengl.buffers.layout.BufferLayout;
 
 import java.nio.FloatBuffer;
 

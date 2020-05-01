@@ -1,21 +1,28 @@
-package renderer;
+package infrastructure.renderer;
 
 import application.RenderFrame;
+import infrastructure.Allocated;
+import infrastructure.opengl.Shader;
+import infrastructure.opengl.buffers.StaticVertexBuffer;
+import infrastructure.opengl.buffers.VertexBuffer;
+import infrastructure.opengl.buffers.layout.BufferElement;
+import infrastructure.opengl.buffers.layout.BufferLayout;
+import infrastructure.opengl.exceptions.ShaderCompileException;
+import infrastructure.opengl.exceptions.ShaderLinkException;
+import infrastructure.opengl.texture.FrameBuffer;
+import infrastructure.resource.AssetManager;
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
-import renderer.buffers.StaticVertexBuffer;
-import renderer.buffers.VertexBuffer;
-import renderer.buffers.layout.BufferElement;
-import renderer.buffers.layout.BufferLayout;
-import renderer.texture.FrameBuffer;
 
+import java.io.FileNotFoundException;
 import java.util.Scanner;
 
 import static org.lwjgl.opengl.GL11.*;
 
-public class Renderer2D
+public class Renderer2D implements Allocated
 {
-	public static Renderer2D loadRenderer(RenderFrame target)
+	public static Renderer2D loadRenderer(RenderFrame target, AssetManager assetManager)
+			throws FileNotFoundException, ShaderLinkException, ShaderCompileException
 	{
 		float data[] = new float[]{
 				1.0f, 1.0f, 0.0f, 1.0f, 1.0f,//
@@ -32,12 +39,12 @@ public class Renderer2D
 				new BufferElement(2),//texture
 		}));
 
-		Shader defaultShader = Shader.fromText(readFile("/shaders/Default.vert"), readFile("/shaders/Default.frag"));
-		Shader testShader = Shader.fromText(readFile("/shaders/TestShader.vert"), readFile("/shaders/TestShader.frag"));
-		Shader occlusionTransform = Shader.fromText(readFile("/Dynamic2DLightPipeline/OcclusionTransform.vert"), readFile("/Dynamic2DLightPipeline/OcclusionTransform.frag"));
-		Shader dynamicLightShader = Shader.fromText(readFile("/Dynamic2DLightPipeline/DynamicLight2D.vert"), readFile("/Dynamic2DLightPipeline/DynamicLight2D.frag"));
-		Shader occlusionShader = Shader.fromText(readFile("/Dynamic2DLightPipeline/Occlusion.vert"), readFile("/Dynamic2DLightPipeline/Occlusion.frag"));
-		Shader lightSamplerShader = Shader.fromText(readFile("/Dynamic2DLightPipeline/LightSampler2D.vert"), readFile("/Dynamic2DLightPipeline/LightSampler2D.frag"));
+		Shader defaultShader = assetManager.getShaders().getShader("/shaders/Default.vert", "/shaders/Default.frag");
+		Shader testShader = assetManager.getShaders().getShader("/shaders/TestShader.vert", "/shaders/TestShader.frag");
+		Shader occlusionTransform = assetManager.getShaders().getShader("/Dynamic2DLightPipeline/OcclusionTransform.vert", "/Dynamic2DLightPipeline/OcclusionTransform.frag");
+		Shader dynamicLightShader = assetManager.getShaders().getShader("/Dynamic2DLightPipeline/DynamicLight2D.vert", "/Dynamic2DLightPipeline/DynamicLight2D.frag");
+		Shader occlusionShader = assetManager.getShaders().getShader("/Dynamic2DLightPipeline/Occlusion.vert", "/Dynamic2DLightPipeline/Occlusion.frag");
+		Shader lightSamplerShader = assetManager.getShaders().getShader("/Dynamic2DLightPipeline/LightSampler2D.vert", "/Dynamic2DLightPipeline/LightSampler2D.frag");
 
 		FrameBuffer localOcclusionMap = FrameBuffer.createFrameBuffer(1024, 1024);
 		FrameBuffer occlusionMap = FrameBuffer.createFrameBuffer(1024, 1024);
@@ -46,15 +53,10 @@ public class Renderer2D
 		return new Renderer2D(target, occlusionMap, dynamicLightLookup, buffer, defaultShader, occlusionTransform, localOcclusionMap, occlusionShader, dynamicLightShader, lightSamplerShader, testShader);
 	}
 
-	private static String readFile(String path)
-	{
-		return new Scanner(Renderer2D.class.getResourceAsStream(path), "UTF-8").useDelimiter("\\A").next();
-	}
-
-	private RenderFrame target;
+	private final RenderFrame target;
 	private final FrameBuffer localOcclusionMap;
-	private FrameBuffer occlusionMap;
-	private FrameBuffer dynamicLightLookup;
+	private final FrameBuffer occlusionMap;
+	private final FrameBuffer dynamicLightLookup;
 
 	private Shader defaultShader;
 	private Shader occlusionShader;
@@ -64,7 +66,7 @@ public class Renderer2D
 	private Shader testShader;
 
 	private Camera currentCamera = null;
-	private VertexBuffer testBuffer;
+	private final VertexBuffer testBuffer;
 
 
 	private Renderer2D(RenderFrame target, FrameBuffer occlusionMap, FrameBuffer dynamicLightLookup, VertexBuffer testBuffer, Shader defaultShader, Shader occlusionTransform, FrameBuffer localOcclusionMap, Shader occlusionShader, Shader dynamicLightShader, Shader lightSamplerShader, Shader testShader)
@@ -98,16 +100,16 @@ public class Renderer2D
 
 	private Matrix4f getProjection()
 	{
-		float halfWidth = target.getPixelWidth() / 2f;
-		float halfHeight = target.getPixelHeight() / 2f;
+		float halfWidth = target.getFrameWidth() / 2f;
+		float halfHeight = target.getFrameHeight() / 2f;
 		return new Matrix4f().setOrtho(-halfWidth, halfWidth, -halfHeight, halfHeight, -1, 1);
 	}
 
 	private Matrix4f getMvp(Transform model)
 	{
 		Vector2f cameraPos = currentCamera.getPosition();
-		float halfWidth = target.getPixelWidth() / 2f;
-		float halfHeight = target.getPixelHeight() / 2f;
+		float halfWidth = target.getFrameWidth() / 2f;
+		float halfHeight = target.getFrameHeight() / 2f;
 
 		return new Matrix4f().setOrtho(-halfWidth, halfWidth, -halfHeight, halfHeight, -1, 1)
 				.translate(model.getPosition().x - cameraPos.x, model.getPosition().y - cameraPos.y, 0)
@@ -125,7 +127,7 @@ public class Renderer2D
 
 	public void endScene()
 	{
-//		drawTestBuffer(localOcclusionMap);
+		//		drawTestBuffer(localOcclusionMap);
 
 		currentCamera = null;
 	}
@@ -161,11 +163,11 @@ public class Renderer2D
 
 		//transform the occlusion map
 		{
-			float halfWidth = transform.getScale().x / target.getPixelWidth() * 2f;
-			float halfHeight = transform.getScale().y / target.getPixelHeight() * 2f;
+			float halfWidth = transform.getScale().x / target.getFrameWidth() * 2f;
+			float halfHeight = transform.getScale().y / target.getFrameHeight() * 2f;
 			Matrix4f localTransform = new Matrix4f().setOrtho(-halfWidth, halfWidth, -halfHeight, halfHeight, -1, 1)
-					.translate(-((transform.getPosition().x - cameraPos.x) / target.getPixelWidth() * 2f),
-							-((transform.getPosition().y - cameraPos.y) / target.getPixelHeight() * 2f), 0);
+					.translate(-((transform.getPosition().x - cameraPos.x) / target.getFrameWidth() * 2f), -((transform.getPosition().y - cameraPos.y) / target
+							.getFrameHeight() * 2f), 0);
 
 			localOcclusionMap.bindContext();
 			localOcclusionMap.setViewport();
@@ -208,8 +210,8 @@ public class Renderer2D
 
 		//draw to light map
 		{
-			float halfWidth = target.getPixelWidth() / 2f;
-			float halfHeight = target.getPixelHeight() / 2f;
+			float halfWidth = target.getFrameWidth() / 2f;
+			float halfHeight = target.getFrameHeight() / 2f;
 
 			Matrix4f mvp = new Matrix4f().setOrtho(-halfWidth, halfWidth, -halfHeight, halfHeight, -1, 1)
 					.translate(transform.getPosition().x - cameraPos.x, transform.getPosition().y - cameraPos.y, 0)
@@ -246,15 +248,13 @@ public class Renderer2D
 	}
 
 
+	@Override
 	public void clean()
 	{
-		defaultShader.clean();
-		occlusionTransform.clean();
-		occlusionShader.clean();
-
 		testBuffer.clean();
 
 		localOcclusionMap.clean();
 		occlusionMap.clean();
+		dynamicLightLookup.clean();
 	}
 }

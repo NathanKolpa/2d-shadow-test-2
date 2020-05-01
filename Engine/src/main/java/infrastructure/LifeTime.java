@@ -1,3 +1,5 @@
+package infrastructure;
+
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.system.Configuration;
 

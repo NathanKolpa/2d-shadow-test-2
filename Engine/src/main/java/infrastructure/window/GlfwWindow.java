@@ -1,5 +1,6 @@
-package window;
+package infrastructure.window;
 
+import application.GameWindow;
 import application.RenderFrame;
 import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.opengl.GL;
@@ -40,9 +41,9 @@ public class GlfwWindow implements GameWindow, RenderFrame
 		windowPtr = glfwCreateWindow(width, height, title, NULL, NULL);
 
 		if (windowPtr == NULL)
-			throw new RuntimeException("Cannot create GLFW window");
+			throw new RuntimeException("Cannot create GLFW graphics.window");
 
-		// set the window to the center
+		// set the graphics.window to the center
 		try (MemoryStack stack = stackPush())
 		{
 			IntBuffer pWidth = stack.mallocInt(1);
@@ -138,13 +139,13 @@ public class GlfwWindow implements GameWindow, RenderFrame
 	}
 
 	@Override
-	public float getPixelWidth()
+	public float getFrameWidth()
 	{
 		return getWidth();
 	}
 
 	@Override
-	public float getPixelHeight()
+	public float getFrameHeight()
 	{
 		return getHeight();
 	}

@@ -4,8 +4,8 @@ public interface RenderFrame
 {
 	void bindContext();
 	void unbindContext();
-	float getPixelWidth();
-	float getPixelHeight();
+	float getFrameWidth();// TODO migrate to int
+	float getFrameHeight();
 	void setViewport();
 	void clear();
 }

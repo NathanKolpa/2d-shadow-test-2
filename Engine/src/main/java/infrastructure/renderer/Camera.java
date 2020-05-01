@@ -1,4 +1,4 @@
-package renderer;
+package infrastructure.renderer;
 
 import org.joml.Vector2f;
 

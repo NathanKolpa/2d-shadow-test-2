@@ -1,13 +1,12 @@
-import renderer.Camera;
-import renderer.Renderer2D;
-import renderer.Shader;
-import renderer.Transform;
-import renderer.buffers.DynamicVertexBuffer;
-import renderer.buffers.layout.BufferElement;
-import renderer.buffers.layout.BufferLayout;
-import window.GlfwWindow;
-
-import java.util.concurrent.TimeUnit;
+import infrastructure.LifeTime;
+import infrastructure.renderer.Camera;
+import infrastructure.renderer.Renderer2D;
+import infrastructure.renderer.Transform;
+import infrastructure.opengl.buffers.DynamicVertexBuffer;
+import infrastructure.opengl.buffers.layout.BufferElement;
+import infrastructure.opengl.buffers.layout.BufferLayout;
+import infrastructure.resource.AssetManager;
+import infrastructure.window.GlfwWindow;
 
 public class Main
 {
@@ -20,15 +19,16 @@ public class Main
 		LifeTime.destroy();
 	}
 
-	public static void run(String[] args)
+	public static void run(String[] args) throws Exception
 	{
 		GlfwWindow window = new GlfwWindow(1280, 720, "yeet");
+		AssetManager assetManager = new AssetManager();
 		window.bindContext();
 
 		//load
 		Camera camera = new Camera();
 
-		Renderer2D renderer2D = Renderer2D.loadRenderer(window);
+		Renderer2D renderer2D = Renderer2D.loadRenderer(window, assetManager);
 		Transform transform = new Transform();
 		transform.getPosition().y = 100;
 		transform.getScale().x = 1000;
@@ -65,7 +65,6 @@ public class Main
 			elapsedTime += 0.1f;
 
 			camera.setRotation(elapsedTime);
-			System.out.println(elapsedTime);
 
 			transform.getScale().x += 1 * 0.5;
 			transform.getScale().y += 1 * 0.5;
@@ -93,9 +92,9 @@ public class Main
 
 		buffer.clean();
 		renderer2D.clean();
+		assetManager.clean();
 
 		window.unbindContext();
 		window.clean();
-
 	}
 }

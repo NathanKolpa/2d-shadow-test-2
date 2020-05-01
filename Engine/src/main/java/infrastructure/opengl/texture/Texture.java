@@ -1,10 +1,12 @@
-package renderer.texture;
+package infrastructure.opengl.texture;
+
+import infrastructure.Allocated;
 
 import java.nio.ByteBuffer;
 
 import static org.lwjgl.opengl.GL13.*;
 
-public class Texture
+public class Texture implements Allocated
 {
 	private int textureId;
 	private int width, height;
@@ -75,5 +77,11 @@ public class Texture
 	public int getTextureId()
 	{
 		return textureId;
+	}
+
+	@Override
+	public void clean()
+	{
+
 	}
 }

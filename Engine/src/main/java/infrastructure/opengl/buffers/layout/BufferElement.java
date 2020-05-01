@@ -1,4 +1,4 @@
-package renderer.buffers.layout;
+package infrastructure.opengl.buffers.layout;
 
 public class BufferElement
 {

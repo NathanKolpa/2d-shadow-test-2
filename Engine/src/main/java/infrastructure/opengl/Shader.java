@@ -1,10 +1,13 @@
-package renderer;
+package infrastructure.opengl;
 
+import infrastructure.Allocated;
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
 import org.lwjgl.BufferUtils;
+import infrastructure.opengl.exceptions.ShaderCompileException;
+import infrastructure.opengl.exceptions.ShaderLinkException;
 
 import java.nio.FloatBuffer;
 import java.util.HashMap;
@@ -12,9 +15,10 @@ import java.util.HashMap;
 import static java.lang.Character.getName;
 import static org.lwjgl.opengl.GL20.*;
 
-public class Shader
+public class Shader implements Allocated
 {
 	public static Shader fromText(String vertexSource, String fragmentSource)
+			throws ShaderCompileException, ShaderLinkException
 	{
 		int programId;
 		int vertexShader = compileShader(vertexSource, GL_VERTEX_SHADER);
@@ -28,10 +32,8 @@ public class Shader
 		String infoLog = glGetProgramInfoLog(programId, glGetProgrami(programId, GL_INFO_LOG_LENGTH));
 
 		if (glGetProgrami(programId, GL_LINK_STATUS) == GL_FALSE)
-			throw new RuntimeException("Error while linking shader: " + infoLog);
+			throw new ShaderLinkException(infoLog);
 
-
-		//clean up
 		glDetachShader(programId, vertexShader);
 		glDetachShader(programId, fragmentShader);
 		glDeleteShader(vertexShader);
@@ -40,7 +42,7 @@ public class Shader
 		return new Shader(programId);
 	}
 
-	private static int compileShader(String source, int type)
+	private static int compileShader(String source, int type) throws ShaderCompileException
 	{
 		int shader = glCreateShader(type);
 		glShaderSource(shader, source);
@@ -49,7 +51,7 @@ public class Shader
 		String infoLog = glGetShaderInfoLog(shader, glGetShaderi(shader, GL_INFO_LOG_LENGTH));
 
 		if (glGetShaderi(shader, GL_COMPILE_STATUS) == GL_FALSE)
-			throw new RuntimeException("Error while compiling a " + getName(type) + " type shader: " + infoLog);
+			throw new ShaderCompileException(infoLog, getName(type));
 
 		return shader;
 	}
@@ -72,6 +74,7 @@ public class Shader
 		glUseProgram(0);
 	}
 
+	@Override
 	public void clean()
 	{
 		unBind();

@@ -1,4 +1,4 @@
-package renderer.buffers.layout;
+package infrastructure.opengl.buffers.layout;
 
 import java.util.ArrayList;
 import java.util.Arrays;

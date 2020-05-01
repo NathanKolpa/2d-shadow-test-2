@@ -1,4 +1,4 @@
-package renderer.texture;
+package infrastructure.opengl.texture;
 
 import application.RenderFrame;
 
@@ -76,13 +76,13 @@ public class FrameBuffer implements RenderFrame
 	}
 
 	@Override
-	public float getPixelWidth()
+	public float getFrameWidth()
 	{
 		return texture.getWidth();
 	}
 
 	@Override
-	public float getPixelHeight()
+	public float getFrameHeight()
 	{
 		return texture.getHeight();
 	}
