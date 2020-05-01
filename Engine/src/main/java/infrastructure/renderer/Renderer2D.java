@@ -15,7 +15,6 @@ import org.joml.Matrix4f;
 import org.joml.Vector2f;
 
 import java.io.FileNotFoundException;
-import java.util.Scanner;
 
 import static org.lwjgl.opengl.GL11.*;
 
@@ -41,10 +40,10 @@ public class Renderer2D implements Allocated
 
 		Shader defaultShader = assetManager.getShaders().getShader("/shaders/Default.vert", "/shaders/Default.frag");
 		Shader testShader = assetManager.getShaders().getShader("/shaders/TestShader.vert", "/shaders/TestShader.frag");
-		Shader occlusionTransform = assetManager.getShaders().getShader("/Dynamic2DLightPipeline/OcclusionTransform.vert", "/Dynamic2DLightPipeline/OcclusionTransform.frag");
-		Shader dynamicLightShader = assetManager.getShaders().getShader("/Dynamic2DLightPipeline/DynamicLight2D.vert", "/Dynamic2DLightPipeline/DynamicLight2D.frag");
-		Shader occlusionShader = assetManager.getShaders().getShader("/Dynamic2DLightPipeline/Occlusion.vert", "/Dynamic2DLightPipeline/Occlusion.frag");
-		Shader lightSamplerShader = assetManager.getShaders().getShader("/Dynamic2DLightPipeline/LightSampler2D.vert", "/Dynamic2DLightPipeline/LightSampler2D.frag");
+		Shader occlusionTransform = assetManager.getShaders().getShader("/shaders/Dynamic2DLightPipeline/OcclusionTransform.vert", "/shaders/Dynamic2DLightPipeline/OcclusionTransform.frag");
+		Shader dynamicLightShader = assetManager.getShaders().getShader("/shaders/Dynamic2DLightPipeline/DynamicLight2D.vert", "/shaders/Dynamic2DLightPipeline/DynamicLight2D.frag");
+		Shader occlusionShader = assetManager.getShaders().getShader("/shaders/Dynamic2DLightPipeline/Occlusion.vert", "/shaders/Dynamic2DLightPipeline/Occlusion.frag");
+		Shader lightSamplerShader = assetManager.getShaders().getShader("/shaders/Dynamic2DLightPipeline/LightSampler2D.vert", "/shaders/Dynamic2DLightPipeline/LightSampler2D.frag");
 
 		FrameBuffer localOcclusionMap = FrameBuffer.createFrameBuffer(1024, 1024);
 		FrameBuffer occlusionMap = FrameBuffer.createFrameBuffer(1024, 1024);
@@ -160,6 +159,7 @@ public class Renderer2D implements Allocated
 	public void addDynamicLight(Transform transform)
 	{
 		Vector2f cameraPos = currentCamera.getPosition();
+		float res = 500;
 
 		//transform the occlusion map
 		{
@@ -196,8 +196,7 @@ public class Renderer2D implements Allocated
 
 			localOcclusionMap.getTexture().bind(1);
 			dynamicLightShader.setInt("uni_texture", 1);
-			dynamicLightShader.setVec2("uni_resolution", localOcclusionMap.getTexture()
-					.getWidth(), localOcclusionMap.getTexture().getHeight());
+			dynamicLightShader.setVec2("uni_resolution", res, res);
 			dynamicLightShader.setFloat("uni_size", 1f);
 
 			testBuffer.draw();
